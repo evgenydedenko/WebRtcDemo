@@ -6,11 +6,11 @@ namespace WebRtcDemoBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoomsController : ControllerBase
+    public class RoomController : ControllerBase
     {
         private readonly IRoomRepository _roomRepository;
 
-        public RoomsController(IRoomRepository roomRepository)
+        public RoomController(IRoomRepository roomRepository)
         {
             _roomRepository = roomRepository;
         }
