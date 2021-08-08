@@ -1,4 +1,6 @@
-﻿namespace WebRtcDemoBackend.DAL.Models
+﻿using System.Collections.Generic;
+
+namespace WebRtcDemoBackend.DAL.Models
 {
     public class User
     {
@@ -11,5 +13,7 @@
         public string Email { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public List<Room> Rooms { get; set; }
     }
 }

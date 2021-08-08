@@ -9,6 +9,7 @@ namespace WebRtcDemoBackend.Infrastructure.Extensions
         public static void RegisterDalDependencies(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
         }
     }
 }

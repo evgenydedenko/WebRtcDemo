@@ -11,10 +11,14 @@ namespace WebRtcDemoBackend.DAL
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Room> Rooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<Room>()
+            .HasOne(u => u.User)
+            .WithMany(r => r.Rooms);
         }
     }
 }
