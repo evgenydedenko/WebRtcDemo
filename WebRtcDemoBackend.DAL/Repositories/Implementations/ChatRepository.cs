@@ -44,7 +44,7 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
 
             messageDto.Id = messageEnity.Id;
             messageDto.CreatedBy = messageEnity.User.FullName;
-            messageDto.AvatarUrl = messageEnity.User.AvatarUrl
+            messageDto.AvatarUrl = messageEnity.User.AvatarUrl;
 
             return messageDto;
         }
