@@ -15,5 +15,7 @@ namespace WebRtcDemoBackend.DAL.Models
         public string AvatarUrl { get; set; }
 
         public List<Room> Rooms { get; set; }
+
+        public List<ChatMessage> ChatMessages { get; set; }
     }
 }

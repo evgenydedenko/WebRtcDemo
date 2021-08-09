@@ -10,6 +10,7 @@ namespace WebRtcDemoBackend.Infrastructure.Extensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IChatRepository, ChatRepository>();
         }
     }
 }

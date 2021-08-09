@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WebRtcDemoBackend.DAL.Models
 {
@@ -13,5 +14,7 @@ namespace WebRtcDemoBackend.DAL.Models
         public int UserId { get; set; }
 
         public User User { get; set; }
+
+        public List<ChatMessage> ChatMessages { get; set; }
     }
 }
