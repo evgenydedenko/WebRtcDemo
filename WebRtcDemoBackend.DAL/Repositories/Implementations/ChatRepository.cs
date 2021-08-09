@@ -24,7 +24,8 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
                     UserId = x.UserId,
                     Message = x.Message,
                     CreatedAt = x.CreatedAt,
-                    CreatedBy = x.User.FullName
+                    CreatedBy = x.User.FullName,
+                    AvatarUrl = x.User.AvatarUrl
                 }).ToArray();
         }
 
@@ -43,6 +44,7 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
 
             messageDto.Id = messageEnity.Id;
             messageDto.CreatedBy = messageEnity.User.FullName;
+            messageDto.AvatarUrl = messageEnity.User.AvatarUrl
 
             return messageDto;
         }

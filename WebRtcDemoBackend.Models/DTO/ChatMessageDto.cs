@@ -15,5 +15,7 @@ namespace WebRtcDemoBackend.Models.DTO
         public string CreatedBy { get; set; }
 
         public DateTime CreatedAt { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }
