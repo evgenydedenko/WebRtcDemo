@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using WebRtcDemoBackend.DAL;
+using WebRtcDemoBackend.Hubs;
 using WebRtcDemoBackend.Infrastructure.Extensions;
 using WebRtcDemoBackend.Models.Infrastructure.ConfigOptions;
 
@@ -31,6 +32,7 @@ namespace WebRtcDemoBackend
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.RegisterDalDependencies();
+            services.AddHttpContextAccessor();
 
             services.AddCors(o => o.AddPolicy(corsPolicyName, builder =>
             {
@@ -44,6 +46,9 @@ namespace WebRtcDemoBackend
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebRtcDemoBackend", Version = "v1" });
+            });
+            services.AddSignalR(o => {
+                o.EnableDetailedErrors = true;
             });
         }
 
@@ -68,6 +73,7 @@ namespace WebRtcDemoBackend
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<RoomsHub>("/chat");
             });
         }
     }

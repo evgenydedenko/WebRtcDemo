@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using WebRtcDemoBackend.DAL.Models;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
@@ -35,7 +36,7 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
             {
                 RoomId = messageDto.RoomId,
                 UserId = messageDto.UserId,
-                CreatedAt = System.DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 Message = messageDto.Message
             };
 
@@ -43,8 +44,11 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
             _context.SaveChanges();
 
             messageDto.Id = messageEnity.Id;
-            messageDto.CreatedBy = messageEnity.User.FullName;
-            messageDto.AvatarUrl = messageEnity.User.AvatarUrl;
+
+            var user = _context.Users.FirstOrDefault(x => x.Id == messageDto.UserId);
+
+            messageDto.CreatedBy = user.FullName;
+            messageDto.AvatarUrl = user.AvatarUrl;
 
             return messageDto;
         }
