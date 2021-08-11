@@ -18,6 +18,7 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
         {
             return _context.ChatMessages
                 .Where(x => x.RoomId == roomId)
+                .OrderBy(x => x.CreatedAt)
                 .Select(x => new ChatMessageDto
                 {
                     Id = x.Id,
