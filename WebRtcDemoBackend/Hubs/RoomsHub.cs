@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WebRtcDemoBackend.BLL.Helpers;
 using WebRtcDemoBackend.BLL.Sevices;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
+using WebRtcDemoBackend.Models.Common;
 using WebRtcDemoBackend.Models.DTO;
 
 namespace WebRtcDemoBackend.Hubs
@@ -53,6 +54,17 @@ namespace WebRtcDemoBackend.Hubs
         {
             var anotherUsers = roomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
             await Clients.Group(RoomId).SendAsync("onAnotherUsersSent", anotherUsers);
+        }
+
+        public async Task OnSendingSignal(SignalDto payload)
+        {
+            await Clients.Group(RoomId).SendAsync("OnUserJoined", payload);
+        }
+
+        public async Task OnReturningSignal(SignalDto payload)
+        {
+            payload.ConnectionId = ConnectionId;
+            await Clients.Group(RoomId).SendAsync("OnReceivingReturnedSignal", payload);
         }
     }
 }
