@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WebRtcDemoBackend.BLL\WebRtcDemoBackend.BLL.csproj" />
     <ProjectReference Include="..\WebRtcDemoBackend.DAL\WebRtcDemoBackend.DAL.csproj" />
     <ProjectReference Include="..\WebRtcDemoBackend.Models\WebRtcDemoBackend.Models.csproj" />
   </ItemGroup>

@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using WebRtcDemoBackend.BLL.Sevices;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
-using WebRtcDemoBackend.Models;
 using WebRtcDemoBackend.Models.DTO;
 
 namespace WebRtcDemoBackend.Hubs
 {
     public class RoomsHub : Hub
     {
-        private readonly static ConcurrentDictionary<int, RoomClients> rooms = new ConcurrentDictionary<int, RoomClients>();
         private readonly IHttpContextAccessor _http;
         private readonly IChatRepository _chatRepository;
+        private readonly static RoomsProcessor roomsProcessor = new();
 
         public RoomsHub(IHttpContextAccessor http, 
             IChatRepository chatRepository)
@@ -39,7 +38,8 @@ namespace WebRtcDemoBackend.Hubs
         public async Task SendMessage(ChatMessageDto chatMessageDto)
         {
             chatMessageDto = _chatRepository.Create(chatMessageDto);
-            await Clients.Group(chatMessageDto.RoomId.ToString()).SendAsync("OnMessageSent", chatMessageDto);
+            var roomId = chatMessageDto.RoomId.ToString();
+            await Clients.Group(roomId).SendAsync("OnMessageSent", chatMessageDto);
         }
 
         private string GetRoomId()

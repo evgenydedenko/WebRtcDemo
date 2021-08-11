@@ -20,11 +20,5 @@ namespace WebRtcDemoBackend.Controllers
         {
             return Ok(_chatRepository.GetAllMessages(roomId));
         }
-
-        [HttpPost]
-        public IActionResult GetAllMessages(ChatMessageDto messageDto)
-        {
-            return Ok(_chatRepository.Create(messageDto));
-        }
     }
 }

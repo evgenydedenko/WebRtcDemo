@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend", "WebRtcDemoBackend\WebRtcDemoBackend.csproj", "{C6CF3141-3371-441B-B3D0-D47A6C477455}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRtcDemoBackend.Models", "WebRtcDemoBackend.Models\WebRtcDemoBackend.Models.csproj", "{862834CB-F89B-43BC-9335-0995C947206D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend.Models", "WebRtcDemoBackend.Models\WebRtcDemoBackend.Models.csproj", "{862834CB-F89B-43BC-9335-0995C947206D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRtcDemoBackend.DAL", "WebRtcDemoBackend.DAL\WebRtcDemoBackend.DAL.csproj", "{3D875D62-D50D-416E-A6C6-A2370B4200C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend.DAL", "WebRtcDemoBackend.DAL\WebRtcDemoBackend.DAL.csproj", "{3D875D62-D50D-416E-A6C6-A2370B4200C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRtcDemoBackend.BLL", "WebRtcDemoBackend.BLL\WebRtcDemoBackend.BLL.csproj", "{BD6DEF59-F28D-4E62-A6F1-1396762CC488}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{3D875D62-D50D-416E-A6C6-A2370B4200C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D875D62-D50D-416E-A6C6-A2370B4200C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D875D62-D50D-416E-A6C6-A2370B4200C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

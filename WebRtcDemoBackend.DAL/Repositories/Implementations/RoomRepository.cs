@@ -42,5 +42,24 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
                Description = r.Description
            }).ToArray();
         }
+
+        public RoomDto Get(int roomId)
+        {
+            var entity = _context.Rooms.FirstOrDefault(r => r.Id == roomId);
+           
+            if (entity == null)
+            {
+                throw new ArgumentException($"Room with id '{roomId}' not found");
+            }
+
+            return new RoomDto
+            {
+                Id = entity.Id,
+                CreatedAt = entity.CreatedAt,
+                UserId = entity.UserId,
+                CreatedBy = entity.User.FullName,
+                Description = entity.Description
+            };
+        }
     }
 }
