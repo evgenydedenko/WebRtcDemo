@@ -40,6 +40,7 @@ namespace WebRtcDemoBackend.Hubs
         {
             await Groups.RemoveFromGroupAsync(ConnectionId, RoomId);
             roomsProcessor.LeaveRoom(RoomNumId, ConnectionId);
+            await Clients.Group(RoomId).SendAsync("onAnotherUsersDisconnected", ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -47,24 +48,24 @@ namespace WebRtcDemoBackend.Hubs
         {
             chatMessageDto = _chatRepository.Create(chatMessageDto);
             var roomId = RoomHelper.GetString(chatMessageDto.RoomId);
-            await Clients.Group(roomId).SendAsync("OnMessageSent", chatMessageDto);
+            await Clients.Group(roomId).SendAsync("onMessageSent", chatMessageDto);
         }
 
         public async Task JoinRoom()
         {
             var anotherUsers = roomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
-            await Clients.Group(RoomId).SendAsync("OnAnotherUsersSent", anotherUsers);
+            await Clients.Client(ConnectionId).SendAsync("onAnotherUsersSent", anotherUsers);
         }
 
         public async Task OnSendingSignal(SignalDto payload)
         {
-            await Clients.Client(payload.UserToSignal).SendAsync("OnUserJoined", payload);
+            await Clients.Client(payload.UserToSignal).SendAsync("onUserJoined", payload);
         }
 
         public async Task OnReturningSignal(SignalDto payload)
         {
             payload.ConnectionId = ConnectionId;
-            await Clients.Client(payload.CallerID).SendAsync("OnReceivingReturnedSignal", payload);
+            await Clients.Client(payload.CallerID).SendAsync("onReceivingReturnedSignal", payload);
         }
     }
 }
