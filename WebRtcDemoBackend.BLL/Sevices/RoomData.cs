@@ -25,7 +25,7 @@ namespace WebRtcDemoBackend.BLL.Sevices
             lock(_lock)
             {
                 RemoveUserByConnection(connectionId);
-                users.Add(new RoomUser { UserId = userId, ConnectionId = connectionId });
+                users.Add(new RoomUser(userId, connectionId));
             }
         }
 
@@ -35,6 +35,11 @@ namespace WebRtcDemoBackend.BLL.Sevices
             {
                 RemoveUserByConnection(connectionId);
             }
+        }
+
+        public IReadOnlyCollection<RoomUser> GetAnotherUsers(string connectionId)
+        {
+            return users.Where(x => x.ConnectionId != connectionId).ToArray();
         }
 
         private void RemoveUserByConnection(string connectionId)

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using WebRtcDemoBackend.Models.Common;
 
 namespace WebRtcDemoBackend.BLL.Sevices
 {
@@ -6,26 +8,22 @@ namespace WebRtcDemoBackend.BLL.Sevices
     {
         private readonly ConcurrentDictionary<int, RoomData> rooms = new ConcurrentDictionary<int, RoomData>();
 
-        public void AddUserRoom(int userId, string roomId, string connectionId)
-        {
-            var roomIdInt = int.Parse(roomId);
-            JoinRoom(userId, roomIdInt, connectionId);
-        }
-
-        public void JoinRoom(int userId, int roomId, string connectionId)
+        public IReadOnlyCollection<RoomUser> JoinRoom(int roomId, int userId, string conenctionId)
         {
             var room = GetRoom(roomId);
             if (room == null)
             {
                 room = AddRoom(roomId);
             }
-            room.AddUser(userId, connectionId);
+            room.AddUser(userId, conenctionId);
+
+            return room.GetAnotherUsers(conenctionId);
         }
 
         public void LeaveRoom(int roomId, string connectionId)
         {
             var room = GetRoom(roomId);
-            if (room == null)
+            if (room != null)
             {
                 room.RemoveUser(connectionId);
                 if (room.UsersCount == 0)
@@ -44,7 +42,7 @@ namespace WebRtcDemoBackend.BLL.Sevices
             return null;
         }
 
-        public RoomData AddRoom(int roomId)
+        private RoomData AddRoom(int roomId)
         {
             var room = new RoomData();
 
@@ -53,7 +51,7 @@ namespace WebRtcDemoBackend.BLL.Sevices
             return room;
         }
 
-        public RoomData RemoveRoom(int roomId)
+        private RoomData RemoveRoom(int roomId)
         {
             rooms.TryRemove(roomId, out RoomData room);
 

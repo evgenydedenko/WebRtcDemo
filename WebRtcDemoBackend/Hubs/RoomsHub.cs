@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
+using WebRtcDemoBackend.BLL.Helpers;
 using WebRtcDemoBackend.BLL.Sevices;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
 using WebRtcDemoBackend.Models.DTO;
@@ -13,6 +14,13 @@ namespace WebRtcDemoBackend.Hubs
         private readonly IHttpContextAccessor _http;
         private readonly IChatRepository _chatRepository;
         private readonly static RoomsProcessor roomsProcessor = new();
+        private IQueryCollection QueryParams => _http.HttpContext.Request.Query;
+        private string ConnectionId => Context.ConnectionId;
+        private string RoomId => QueryParams["roomId"];
+        private string UserId => QueryParams["userId"];
+        private int RoomNumId => RoomHelper.GetInt(QueryParams["roomId"]);
+        private int UserNumId => RoomHelper.GetInt(QueryParams["userId"]);
+
 
         public RoomsHub(IHttpContextAccessor http, 
             IChatRepository chatRepository)
@@ -23,29 +31,28 @@ namespace WebRtcDemoBackend.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var roomId = GetRoomId();
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Groups.AddToGroupAsync(ConnectionId, RoomId);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var roomId = GetRoomId();
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
+            await Groups.RemoveFromGroupAsync(ConnectionId, RoomId);
+            roomsProcessor.LeaveRoom(RoomNumId, ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendMessage(ChatMessageDto chatMessageDto)
         {
             chatMessageDto = _chatRepository.Create(chatMessageDto);
-            var roomId = chatMessageDto.RoomId.ToString();
+            var roomId = RoomHelper.GetString(chatMessageDto.RoomId);
             await Clients.Group(roomId).SendAsync("OnMessageSent", chatMessageDto);
         }
 
-        private string GetRoomId()
+        public async Task JoinRoom()
         {
-            var query = _http.HttpContext.Request.Query;
-            return query["roomId"];
+            var anotherUsers = roomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
+            await Clients.Group(RoomId).SendAsync("onAnotherUsersSent", anotherUsers);
         }
     }
 }
