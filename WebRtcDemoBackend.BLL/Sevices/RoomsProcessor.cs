@@ -6,7 +6,7 @@ namespace WebRtcDemoBackend.BLL.Sevices
 {
     public class RoomsProcessor
     {
-        private readonly ConcurrentDictionary<int, RoomData> rooms = new ConcurrentDictionary<int, RoomData>();
+        private readonly ConcurrentDictionary<int, RoomData> rooms = new();
 
         public IReadOnlyCollection<RoomUser> JoinRoom(int roomId, int userId, string conenctionId)
         {
