@@ -58,13 +58,13 @@ namespace WebRtcDemoBackend.Hubs
 
         public async Task OnSendingSignal(SignalDto payload)
         {
-            await Clients.Group(RoomId).SendAsync("OnUserJoined", payload);
+            await Clients.Client(payload.UserToSignal).SendAsync("OnUserJoined", payload);
         }
 
         public async Task OnReturningSignal(SignalDto payload)
         {
             payload.ConnectionId = ConnectionId;
-            await Clients.Group(RoomId).SendAsync("OnReceivingReturnedSignal", payload);
+            await Clients.Client(payload.CallerID).SendAsync("OnReceivingReturnedSignal", payload);
         }
     }
 }
