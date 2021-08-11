@@ -53,7 +53,7 @@ namespace WebRtcDemoBackend.Hubs
         public async Task JoinRoom()
         {
             var anotherUsers = roomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
-            await Clients.Group(RoomId).SendAsync("onAnotherUsersSent", anotherUsers);
+            await Clients.Group(RoomId).SendAsync("OnAnotherUsersSent", anotherUsers);
         }
 
         public async Task OnSendingSignal(SignalDto payload)
