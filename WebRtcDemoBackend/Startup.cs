@@ -61,9 +61,15 @@ namespace WebRtcDemoBackend
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebRtcDemoBackend v1"));
             }
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                if (!scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.CanConnect())
+                {
+                    throw new System.InvalidOperationException();
+                }
+            }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
