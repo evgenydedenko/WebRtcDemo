@@ -1,0 +1,96 @@
+#chat-component-container {
+  width: 100%;
+  height: 100%;
+}
+
+#chat-messages-container {
+  height: calc(100% - 170px);
+  max-height: calc(100% - 170px);;
+  overflow: auto;
+}
+
+#chat-controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 170px;
+}
+
+#chat-controls-container .mat-form-field {
+  width: 100%;
+  margin-right: 1.5em;
+  position: relative;
+}
+
+#chat-controls-container .mat-form-field textarea
+{
+  width: calc(100% - 38px);
+}
+
+#chat-controls-container > button {
+  position: absolute;
+  bottom: 40px;
+  right: 30px;
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-right: 2em;
+}
+
+.message.not-self {
+  padding-right: .5em;
+  flex-direction: row-reverse;
+}
+
+.message.not-self > div > div {
+  background: #f5f5f5;
+}
+
+.message.not-self > div {
+  padding-right: 1.5em;
+}
+
+.message > img {
+  border-radius: 50%;
+  border: 2px solid #69f0ae;
+  margin: .5em;
+  width: 50px;
+}
+
+.message > div {
+  width: 100%;
+  margin: .5em;
+}
+
+.message > div > div {
+  width: 100%;
+  padding: .5em;
+  border-radius: 0.6em;
+  background: #69f0ae;
+  color: #333;
+}
+
+.message > div > span {
+  font-size: 12px;
+  color: #ccc;
+  margin: 0 0 0 .8em;
+  padding-bottom: .3em;
+}
+
+.message > div > div > time {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: #454545;
+}
+
+.message > div > div > article {
+  font-size: 13px;
+  padding: .3em 0;
+  word-break: break-word;
+  white-space: pre-line;
+}

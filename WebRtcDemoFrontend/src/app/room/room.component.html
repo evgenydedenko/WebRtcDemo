@@ -1,0 +1,35 @@
+<div id="room-container">
+  <div>
+    <app-user></app-user>
+    <div id="media-buttons-control">
+      <button mat-mini-fab color="accent" [title]="audioLabel" (click)="toggleAudio()">
+        <mat-icon>{{audioIcon}}</mat-icon>
+      </button>
+      <button mat-mini-fab color="accent" [title]="videoLabel" (click)="toggleVideo()">
+        <mat-icon>{{videoIcon}}</mat-icon>
+      </button>
+      <button mat-mini-fab color="accent" title="Leave room" (click)="leaveRoom()">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div id="room-content-container">
+    <div id="room-video-call-container">
+      <div id="waiting-title" *ngIf="!users.length">Waiting for another users...</div>
+      <mat-grid-list cols="3" rowHeight="250px">
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          *ngFor="let user of users">
+          <app-video-view [user]="user"></app-video-view>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+    <div id="room-chat-container">
+      <app-chat [roomId]="currentRoomId"></app-chat>
+    </div>
+    <div id="self-video-container" cdkDragBoundary="#app-root" cdkDrag>
+      <video #selfVideo autoplay></video>
+    </div>
+  </div>
+</div>

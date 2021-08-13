@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31521.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend", "WebRtcDemoBackend\WebRtcDemoBackend.csproj", "{C6CF3141-3371-441B-B3D0-D47A6C477455}"
 EndProject
@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend.Models", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend.DAL", "WebRtcDemoBackend.DAL\WebRtcDemoBackend.DAL.csproj", "{3D875D62-D50D-416E-A6C6-A2370B4200C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRtcDemoBackend.BLL", "WebRtcDemoBackend.BLL\WebRtcDemoBackend.BLL.csproj", "{BD6DEF59-F28D-4E62-A6F1-1396762CC488}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRtcDemoBackend.BLL", "WebRtcDemoBackend.BLL\WebRtcDemoBackend.BLL.csproj", "{BD6DEF59-F28D-4E62-A6F1-1396762CC488}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "WebRtcDemoFrontend", "WebRtcDemoFrontend\WebRtcDemoFrontend.esproj", "{C12D5D40-0542-46B1-87BB-C5118416DB75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,12 @@ Global
 		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD6DEF59-F28D-4E62-A6F1-1396762CC488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C12D5D40-0542-46B1-87BB-C5118416DB75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C12D5D40-0542-46B1-87BB-C5118416DB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C12D5D40-0542-46B1-87BB-C5118416DB75}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C12D5D40-0542-46B1-87BB-C5118416DB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C12D5D40-0542-46B1-87BB-C5118416DB75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C12D5D40-0542-46B1-87BB-C5118416DB75}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

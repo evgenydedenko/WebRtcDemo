@@ -1,0 +1,33 @@
+<div id="chat-component-container">
+  <div id="chat-messages-container" #scrollContainer>
+    <div class="message"
+         *ngFor="let mes of messages; trackBy: trackByFn"
+         [class.not-self]="currentUserId !== mes.userId">
+      <img [src]="mes.avatarUrl" [title]="mes.createdBy">
+      <div>
+        <span>{{ mes.createdBy }}</span>
+        <div>
+          <article>{{ mes.message }}</article>
+          <time>{{ mes.createdAt | date: 'short' }}</time>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="chat-controls-container">
+    <mat-form-field appearance="fill" color="accent">
+      <mat-label>Type a message...</mat-label>
+      <textarea matInput
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="5"
+                cdkAutosizeMaxRows="5"
+                maxlength="255"
+                [(ngModel)]="message"
+                (keyup.enter)="sendMessage($event)"></textarea>
+    </mat-form-field>
+    <button mat-mini-fab color="accent" (click)="sendMessage($event)">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>
+

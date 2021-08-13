@@ -1,0 +1,29 @@
+@import "~@angular/material/prebuilt-themes/purple-green.css";
+
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family:Roboto, "Helvetica Neue", sans-serif;
+}
+
+.selected {
+  background: #69f0ae;
+}
+
+.selected > * {
+  color: #454545 !important;
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #69f0ae;
+  border-radius: 100px;
+}

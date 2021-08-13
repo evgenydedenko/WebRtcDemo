@@ -1,0 +1,13 @@
+<ng-container>
+  <div class="user-info-container" [matMenuTriggerFor]="menu">
+    <img [src]="user.avatarUrl" [alt]="user.fullName">
+    <span>{{ user.fullName }}</span>
+  </div>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="logOut()">
+      <mat-icon aria-hidden="false" aria-label="Example home icon">logout_outline</mat-icon>
+      <span>LogOut</span>
+    </button>
+  </mat-menu>
+</ng-container>
+

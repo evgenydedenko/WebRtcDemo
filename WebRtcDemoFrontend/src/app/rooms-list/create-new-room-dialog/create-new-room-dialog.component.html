@@ -1,0 +1,25 @@
+<div>
+  <h1 mat-dialog-title>Create new room</h1>
+  <div mat-dialog-content>
+   <p>Enter a description of the room</p>
+    <mat-form-field appearance="fill" color="accent">
+      <mat-label>Autosize textarea</mat-label>
+      <textarea matInput
+                cdkTextareaAutosize
+                #description="ngModel"
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="5"
+                cdkAutosizeMaxRows="5"
+                maxlength="255"
+                required minlength="5"
+                [(ngModel)]="data.description"></textarea>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()"><mat-icon>close</mat-icon>Cancel</button>
+    <button mat-button [mat-dialog-close]="data.description" cdkFocusInitial [disabled]="!!description.errors">
+      <mat-icon>add</mat-icon>
+      Create
+    </button>
+  </div>
+</div>

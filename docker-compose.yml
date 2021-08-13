@@ -1,0 +1,45 @@
+version: '3.7'
+
+volumes:
+  database_data:
+    driver: local
+  database_log:
+    driver: local
+  database_secrets:
+    driver: local
+
+services:
+  webrtc_db:
+    image: mcr.microsoft.com/mssql/server
+    container_name: webrtc_db
+    user: root
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_SA_PASSWORD=Test12345@
+    volumes:
+      - database_data:/var/opt/mssql/data
+      - database_log:/var/opt/mssql/log
+      - database_secrets:/var/opt/mssql/secrets
+    ports:
+      - 4202:1433
+
+  webrtc_back:
+    image: webrtcdemo/back
+    container_name: webrtc_back
+    depends_on:
+      - webrtc_db
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=docker
+    ports:
+      - 4201:80
+
+  webrtc_front:
+    image: webrtcdemo/front
+    container_name: webrtc_front
+    depends_on:
+      - webrtc_back
+    restart: unless-stopped
+    ports:
+      - 4200:80
