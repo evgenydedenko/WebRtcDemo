@@ -79,8 +79,8 @@
 
 .video-cell {
   width: 30%;
-  max-height: 75%;
-  flex: 0.2 1 auto;
+  max-height: 60%;
+  flex: 0.05 1 auto;
 }
 
 /* Large Devices, Wide Screens */
@@ -104,8 +104,6 @@
   }
 
   .video-cell {
-    width: 50%;
-    max-height: 75%;
     flex: 0.4 1 auto;
   }
 }
