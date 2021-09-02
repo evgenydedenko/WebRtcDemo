@@ -2,6 +2,9 @@
   <div>
     <app-user></app-user>
     <div id="media-buttons-control">
+      <button mat-mini-fab color="accent" title="Open settings" (click)="openSettings()">
+        <mat-icon>settings</mat-icon>
+      </button>
       <button mat-mini-fab color="accent" [title]="chatLabel" (click)="toggleChat()">
         <mat-icon>{{chatIcon}}</mat-icon>
       </button>

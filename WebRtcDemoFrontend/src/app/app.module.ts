@@ -22,6 +22,8 @@ import {TextFieldModule} from "@angular/cdk/text-field";
 import {HttpClientModule} from "@angular/common/http";
 import { VideoViewComponent } from './video-view/video-view.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { SettingsComponent } from './settings/settings.component';
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     UserComponent,
     CreateNewRoomDialogComponent,
     VideoViewComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,11 +51,14 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     MatInputModule,
     TextFieldModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSelectModule
   ],
   entryComponents: [
     RoomsListComponent,
-    CreateNewRoomDialogComponent
+    CreateNewRoomDialogComponent,
+    RoomComponent,
+    SettingsComponent
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

@@ -5,6 +5,12 @@ import {AuthGuard} from "../auth-guard.service";
 import {RoomUserModel} from "../models/room-user-model";
 import {SignalModel} from "../models/signal-model";
 import {Subscription} from "rxjs";
+import {MatDialog} from "@angular/material/dialog";
+import {CreateNewRoomDialogComponent} from "../rooms-list/create-new-room-dialog/create-new-room-dialog.component";
+import {RoomModel} from "../models/room-model";
+import {SettingsComponent} from "../settings/settings.component";
+import {IDevicesModel, IDevicesModelShort} from "../models/i-devices-model";
+import {DevicesService} from "../devices.service";
 
 declare var SimplePeer: import('simple-peer').SimplePeer;
 
@@ -59,7 +65,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   constructor(private readonly route: ActivatedRoute,
               private readonly signalRService: SignalRService,
               private readonly authGuard: AuthGuard,
-              private readonly changeDetectorRef: ChangeDetectorRef) { }
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              public dialog: MatDialog,
+              private readonly devicesService: DevicesService) { }
 
   async ngOnInit() {
     this.setViewPortSize();
@@ -108,6 +116,28 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.authGuard.navigateToRoot();
   }
 
+ async openSettings() {
+    if (!this.isInit) return;
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const data = this.devicesService.getDevicesFullData(devices);
+    const dialogRef = this.dialog.open(SettingsComponent, {
+      width: '500px',
+      height: '400px',
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe( async (data) => {
+      if (!data) return;
+      const devicesShort = {
+        audioInput: data.audioInput,
+        audioOutput: data.audioOutput,
+        videoInput: data.videoInput
+      } as IDevicesModelShort;
+      localStorage.setItem('devices', JSON.stringify(devicesShort));
+      location.reload();
+    });
+  }
+
   private watchDisconnectedUsers(): void {
     const onAnotherUsersDisconnectedSub = this.signalRService.onAnotherUsersDisconnected.subscribe(connectionId => {
       this.users = this.users.filter(u => u.connectionId !== connectionId);
@@ -152,32 +182,39 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  async getUserMedia() {
+    const devicesList = await navigator.mediaDevices.enumerateDevices();
+    const devices = this.devicesService.getDevicesFullData(devicesList);
+    return await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: 330,
+        height: 180,
+        deviceId: devices.videoInput
+      },
+      audio: {
+        deviceId: devices.audioInput
+      },
+    })
+  }
+
   private initSelfMedia(): void {
     if (this.isInit) return;
     this.isInit = true;
     (async () => {
-      // Need for test
-      // const devices = await navigator.mediaDevices.enumerateDevices();
-      // const videoDevices = devices.filter(x => x.kind === 'videoinput');
-      //
-      // const deviceId = this.authGuard.userView.dbId === 1 ? videoDevices[0].deviceId : videoDevices[1].deviceId;
-      navigator.mediaDevices.getUserMedia({
-        video: {
-          width: 330,
-          height: 180
-        },
-        audio: true,
-      }).then(stream => {
-        this.currentRoomUser = {
-          userId: this.authGuard.userView.dbId,
-          connectionId: this.signalRService.connectionId,
-          isSelf: true,
-          stream: stream
-        } as RoomUserModel;
-        this.initSelfConnection(stream);
-        this.toggleAudio();
-      });
+      const stream = await this.getUserMedia();
+      this.initSelfConnection(stream);
+      this.setCurrentRoomUser(stream);
+      this.toggleAudio();
     })();
+  }
+
+  private setCurrentRoomUser(stream: MediaStream): void {
+    this.currentRoomUser = {
+      userId: this.authGuard.userView.dbId,
+      connectionId: this.signalRService.connectionId,
+      isSelf: true,
+      stream: stream
+    } as RoomUserModel;
   }
 
   private initSelfConnection(selfStream: any): void {
