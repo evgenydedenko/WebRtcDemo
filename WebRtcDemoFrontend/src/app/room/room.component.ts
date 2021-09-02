@@ -1,11 +1,10 @@
-import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {SignalRService} from "../services/signal-r.service";
 import {AuthGuard} from "../auth-guard.service";
 import {RoomUserModel} from "../models/room-user-model";
 import {SignalModel} from "../models/signal-model";
 import {Subscription} from "rxjs";
-import {setStream} from "../helpers/StreamHelper";
 
 declare var SimplePeer: import('simple-peer').SimplePeer;
 
@@ -15,14 +14,14 @@ declare var SimplePeer: import('simple-peer').SimplePeer;
   styleUrls: ['./room.component.scss']
 })
 export class RoomComponent implements OnInit, OnDestroy {
-  @ViewChild('selfVideo') private selfVideoContainer: ElementRef = {} as ElementRef;
   private isInit: boolean = false;
   private subscriptionsPool: Subscription[] = [];
   currentRoomId: number = 0;
   users: RoomUserModel[] = [];
-  localStream: MediaStream | undefined;
+  currentRoomUser: RoomUserModel | undefined;
   audio = true;
   video = true;
+  chat = true;
 
   get audioIcon(): string {
     return this.audio ? 'mic' : 'mic_off';
@@ -32,12 +31,29 @@ export class RoomComponent implements OnInit, OnDestroy {
     return this.video ? 'videocam' : 'videocam_off'
   }
 
+  get chatIcon(): string {
+    return this.chat ? 'speaker_notes_off' : 'speaker_notes_on'
+  }
+
   get audioLabel(): string {
     return this.audio ? 'Mute' : 'Unmute';
   }
 
+  get chatLabel(): string {
+    return this.chat ? 'Hide chat' : 'Show chat';
+  }
+
   get videoLabel(): string {
     return this.video ? "Disable camera" : 'Enable camera';
+  }
+
+  get localStream(): MediaStream | undefined {
+    return this.currentRoomUser?.stream;
+  }
+
+  set localStream(stream: MediaStream | undefined) {
+    if (!this.currentRoomUser) return;
+    this.currentRoomUser.stream = stream;
   }
 
   constructor(private readonly route: ActivatedRoute,
@@ -46,6 +62,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   async ngOnInit() {
+    this.setViewPortSize();
     this.setRoomId();
     if (this.authGuard.userView.dbId > 0) {
       await this.runRoom();
@@ -63,6 +80,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.subscriptionsPool.forEach(sub => sub.unsubscribe());
   }
 
+  onResize(): void {
+    this.setViewPortSize();
+  }
+
   async runRoom(): Promise<void> {
     await this.signalRService.connectToHub(this.currentRoomId, this.authGuard.userView.dbId);
     this.watchDisconnectedUsers();
@@ -77,6 +98,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   toggleVideo(): void {
     this.video = !this.video;
     this.setStreamVideo();
+  }
+
+  toggleChat(): void {
+    this.chat = !this.chat;
   }
 
   leaveRoom(): void {
@@ -136,18 +161,21 @@ export class RoomComponent implements OnInit, OnDestroy {
       // const videoDevices = devices.filter(x => x.kind === 'videoinput');
       //
       // const deviceId = this.authGuard.userView.dbId === 1 ? videoDevices[0].deviceId : videoDevices[1].deviceId;
-      const videoEl = this.selfVideoContainer.nativeElement;
       navigator.mediaDevices.getUserMedia({
         video: {
           width: 330,
-          height: 180,
-          //deviceId: deviceId
+          height: 180
         },
         audio: true,
       }).then(stream => {
-        this.localStream = stream;
-        setStream(videoEl, stream, true);
+        this.currentRoomUser = {
+          userId: this.authGuard.userView.dbId,
+          connectionId: this.signalRService.connectionId,
+          isSelf: true,
+          stream: stream
+        } as RoomUserModel;
         this.initSelfConnection(stream);
+        this.toggleAudio();
       });
     })();
   }
@@ -225,5 +253,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     peer.signal(incomingSignal);
 
     return peer;
+  }
+
+  private setViewPortSize(): void {
+    if (window.innerWidth < 1200) {
+      this.chat = false;
+    }
   }
 }

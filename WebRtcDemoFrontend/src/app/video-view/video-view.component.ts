@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {RoomUserModel} from "../models/room-user-model";
 import {setStream} from "../helpers/StreamHelper";
 
@@ -7,14 +7,20 @@ import {setStream} from "../helpers/StreamHelper";
   templateUrl: './video-view.component.html',
   styleUrls: ['./video-view.component.scss']
 })
-export class VideoViewComponent implements OnInit, AfterViewInit {
+export class VideoViewComponent implements OnInit {
   private roomUser = {} as RoomUserModel;
 
-  @Input('user') set user(user: RoomUserModel) {
+  @Input('user') set user(user: RoomUserModel | undefined) {
+    if (!user) return;
     this.roomUser = user;
-    this.roomUser.peer.on("stream", (stream:any) => {
-      setStream(this.videoElement.nativeElement, stream);
-    });
+    if (user.isSelf) {
+      this.setVideo();
+    } else {
+      this.roomUser.peer.on("stream", (stream:MediaStream) => {
+        this.roomUser.stream = stream;
+        this.setVideo();
+      });
+    }
   }
 
   get user(): RoomUserModel {
@@ -29,8 +35,8 @@ export class VideoViewComponent implements OnInit, AfterViewInit {
 
   }
 
-  ngAfterViewInit(): void {
-
+  private setVideo(): void {
+    const { stream, isSelf } = this.roomUser;
+    setStream(this.videoElement.nativeElement, stream, isSelf);
   }
-
 }
