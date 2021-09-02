@@ -88,10 +88,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.subscriptionsPool.forEach(sub => sub.unsubscribe());
   }
 
-  onResize(): void {
-    this.setViewPortSize();
-  }
-
   async runRoom(): Promise<void> {
     await this.signalRService.connectToHub(this.currentRoomId, this.authGuard.userView.dbId);
     this.watchDisconnectedUsers();
