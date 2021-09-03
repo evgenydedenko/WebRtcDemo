@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {RoomUserModel} from "../models/room-user-model";
 import {setStream} from "../helpers/StreamHelper";
+import {DevicesService} from "../devices.service";
 
 @Component({
   selector: 'app-video-view',
@@ -10,11 +11,17 @@ import {setStream} from "../helpers/StreamHelper";
 export class VideoViewComponent implements OnInit, AfterViewInit {
   private roomUser = {} as RoomUserModel;
 
-  @Input('user') set user(user: RoomUserModel) {
+  @Input('user') set user(user: RoomUserModel | undefined) {
+    if (!user) return;
     this.roomUser = user;
-    this.roomUser.peer.on("stream", (stream:any) => {
-      setStream(this.videoElement.nativeElement, stream);
-    });
+    if (user.isSelf) {
+      this.setVideo();
+    } else {
+      this.roomUser.peer.on("stream", (stream:MediaStream) => {
+        this.roomUser.stream = stream;
+        this.setVideo();
+      });
+    }
   }
 
   get user(): RoomUserModel {
@@ -23,14 +30,33 @@ export class VideoViewComponent implements OnInit, AfterViewInit {
 
   @ViewChild('videoElement') private videoElement: ElementRef = {} as ElementRef;
 
-  constructor() { }
+  constructor(private readonly devicesService: DevicesService) { }
+
+  ngAfterViewInit(): void {
+    this.attachSinkId(this.videoElement.nativeElement, this.devicesService.devices.audioOutput);
+  }
 
   ngOnInit(): void {
 
   }
 
-  ngAfterViewInit(): void {
-
+  private setVideo(): void {
+    const { stream, isSelf } = this.roomUser;
+    setStream(this.videoElement.nativeElement, stream, isSelf);
   }
 
+  private attachSinkId(element: any, sinkId: string | undefined) {
+    if (!sinkId) return;
+    if (typeof element.sinkId !== 'undefined') {
+      element.setSinkId(sinkId)
+        .then(() => {
+          console.log(`Success, audio output device attached: ${sinkId}`);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    } else {
+      console.warn('Browser does not support output device selection.');
+    }
+  }
 }

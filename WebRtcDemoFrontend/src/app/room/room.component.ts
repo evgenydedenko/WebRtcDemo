@@ -1,11 +1,16 @@
-import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {SignalRService} from "../services/signal-r.service";
 import {AuthGuard} from "../auth-guard.service";
 import {RoomUserModel} from "../models/room-user-model";
 import {SignalModel} from "../models/signal-model";
 import {Subscription} from "rxjs";
-import {setStream} from "../helpers/StreamHelper";
+import {MatDialog} from "@angular/material/dialog";
+import {CreateNewRoomDialogComponent} from "../rooms-list/create-new-room-dialog/create-new-room-dialog.component";
+import {RoomModel} from "../models/room-model";
+import {SettingsComponent} from "../settings/settings.component";
+import {IDevicesModel, IDevicesModelShort} from "../models/i-devices-model";
+import {DevicesService} from "../devices.service";
 
 declare var SimplePeer: import('simple-peer').SimplePeer;
 
@@ -15,14 +20,14 @@ declare var SimplePeer: import('simple-peer').SimplePeer;
   styleUrls: ['./room.component.scss']
 })
 export class RoomComponent implements OnInit, OnDestroy {
-  @ViewChild('selfVideo') private selfVideoContainer: ElementRef = {} as ElementRef;
   private isInit: boolean = false;
   private subscriptionsPool: Subscription[] = [];
   currentRoomId: number = 0;
   users: RoomUserModel[] = [];
-  localStream: MediaStream | undefined;
+  currentRoomUser: RoomUserModel | undefined;
   audio = true;
   video = true;
+  chat = true;
 
   get audioIcon(): string {
     return this.audio ? 'mic' : 'mic_off';
@@ -32,20 +37,40 @@ export class RoomComponent implements OnInit, OnDestroy {
     return this.video ? 'videocam' : 'videocam_off'
   }
 
+  get chatIcon(): string {
+    return this.chat ? 'speaker_notes_off' : 'speaker_notes_on'
+  }
+
   get audioLabel(): string {
     return this.audio ? 'Mute' : 'Unmute';
+  }
+
+  get chatLabel(): string {
+    return this.chat ? 'Hide chat' : 'Show chat';
   }
 
   get videoLabel(): string {
     return this.video ? "Disable camera" : 'Enable camera';
   }
 
+  get localStream(): MediaStream | undefined {
+    return this.currentRoomUser?.stream;
+  }
+
+  set localStream(stream: MediaStream | undefined) {
+    if (!this.currentRoomUser) return;
+    this.currentRoomUser.stream = stream;
+  }
+
   constructor(private readonly route: ActivatedRoute,
               private readonly signalRService: SignalRService,
               private readonly authGuard: AuthGuard,
-              private readonly changeDetectorRef: ChangeDetectorRef) { }
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              public dialog: MatDialog,
+              private readonly devicesService: DevicesService) { }
 
   async ngOnInit() {
+    this.setViewPortSize();
     this.setRoomId();
     if (this.authGuard.userView.dbId > 0) {
       await this.runRoom();
@@ -79,8 +104,34 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.setStreamVideo();
   }
 
+  toggleChat(): void {
+    this.chat = !this.chat;
+  }
+
   leaveRoom(): void {
     this.authGuard.navigateToRoot();
+  }
+
+ async openSettings() {
+    if (!this.isInit) return;
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const data = this.devicesService.getDevicesFullData(devices);
+    const dialogRef = this.dialog.open(SettingsComponent, {
+      width: '500px',
+      height: '400px',
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe( async (data) => {
+      if (!data) return;
+      const devicesShort = {
+        audioInput: data.audioInput,
+        audioOutput: data.audioOutput,
+        videoInput: data.videoInput
+      } as IDevicesModelShort;
+      localStorage.setItem('devices', JSON.stringify(devicesShort));
+      location.reload();
+    });
   }
 
   private watchDisconnectedUsers(): void {
@@ -127,29 +178,39 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  async getUserMedia() {
+    const devicesList = await navigator.mediaDevices.enumerateDevices();
+    const devices = this.devicesService.getDevicesFullData(devicesList);
+    return await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: 330,
+        height: 180,
+        deviceId: devices.videoInput
+      },
+      audio: {
+        deviceId: devices.audioInput
+      },
+    })
+  }
+
   private initSelfMedia(): void {
     if (this.isInit) return;
     this.isInit = true;
     (async () => {
-      // Need for test
-      // const devices = await navigator.mediaDevices.enumerateDevices();
-      // const videoDevices = devices.filter(x => x.kind === 'videoinput');
-      //
-      // const deviceId = this.authGuard.userView.dbId === 1 ? videoDevices[0].deviceId : videoDevices[1].deviceId;
-      const videoEl = this.selfVideoContainer.nativeElement;
-      navigator.mediaDevices.getUserMedia({
-        video: {
-          width: 330,
-          height: 180,
-          //deviceId: deviceId
-        },
-        audio: true,
-      }).then(stream => {
-        this.localStream = stream;
-        setStream(videoEl, stream, true);
-        this.initSelfConnection(stream);
-      });
+      const stream = await this.getUserMedia();
+      this.initSelfConnection(stream);
+      this.setCurrentRoomUser(stream);
+      this.toggleAudio();
     })();
+  }
+
+  private setCurrentRoomUser(stream: MediaStream): void {
+    this.currentRoomUser = {
+      userId: this.authGuard.userView.dbId,
+      connectionId: this.signalRService.connectionId,
+      isSelf: true,
+      stream: stream
+    } as RoomUserModel;
   }
 
   private initSelfConnection(selfStream: any): void {
@@ -225,5 +286,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     peer.signal(incomingSignal);
 
     return peer;
+  }
+
+  private setViewPortSize(): void {
+    if (window.innerWidth < 1200) {
+      this.chat = false;
+    }
   }
 }

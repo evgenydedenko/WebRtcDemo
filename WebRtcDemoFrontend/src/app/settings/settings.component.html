@@ -1,0 +1,30 @@
+<div>
+  <h1 mat-dialog-title>Devices settings</h1>
+  <div mat-dialog-content>
+    <mat-form-field appearance="fill" color="accent" style="width: 100%">
+      <mat-label><mat-icon>mic</mat-icon> Microphone</mat-label>
+      <mat-select [(value)]="data.audioInput">
+        <mat-option *ngFor="let ai of data.audioInputs" [value]="ai.deviceId">{{ai.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" color="accent" style="width: 100%">
+      <mat-label><mat-icon>photo_camera</mat-icon> Camera</mat-label>
+      <mat-select [(value)]="data.videoInput">
+        <mat-option *ngFor="let vi of data.videoInputs" [value]="vi.deviceId">{{vi.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" color="accent" style="width: 100%">
+      <mat-label><mat-icon>headset</mat-icon> Audio output</mat-label>
+      <mat-select [(value)]="data.audioOutput">
+        <mat-option *ngFor="let au of data.audioOutputs" [value]="au.deviceId">{{au.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()"><mat-icon>close</mat-icon>Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>
+      <mat-icon>save</mat-icon>
+      OK
+    </button>
+  </div>
+</div>

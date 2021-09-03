@@ -2,6 +2,12 @@
   <div>
     <app-user></app-user>
     <div id="media-buttons-control">
+      <button mat-mini-fab color="accent" title="Open settings" (click)="openSettings()">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <button mat-mini-fab color="accent" [title]="chatLabel" (click)="toggleChat()">
+        <mat-icon>{{chatIcon}}</mat-icon>
+      </button>
       <button mat-mini-fab color="accent" [title]="audioLabel" (click)="toggleAudio()">
         <mat-icon>{{audioIcon}}</mat-icon>
       </button>
@@ -13,23 +19,30 @@
       </button>
     </div>
   </div>
-  <div id="room-content-container">
+  <div id="room-content-container" [class.is-chat-closed]="!chat">
     <div id="room-video-call-container">
-      <div id="waiting-title" *ngIf="!users.length">Waiting for another users...</div>
-      <mat-grid-list cols="3" rowHeight="250px">
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          *ngFor="let user of users">
-          <app-video-view [user]="user"></app-video-view>
-        </mat-grid-tile>
-      </mat-grid-list>
+      <div class="video-cell" [class.hidden]="!users.length">
+        <app-video-view [user]="currentRoomUser"></app-video-view>
+      </div>
+      <div id="waiting-title" *ngIf="!users.length">
+        <div>
+          <mat-progress-spinner
+            class="example-margin"
+            color="accent"
+            diameter="70"
+            mode="indeterminate">
+          </mat-progress-spinner>
+        </div>
+        <div>
+          Waiting for another users...
+        </div>
+      </div>
+      <div class="video-cell" *ngFor="let user of users">
+        <app-video-view [user]="user"></app-video-view>
+      </div>
     </div>
     <div id="room-chat-container">
       <app-chat [roomId]="currentRoomId"></app-chat>
-    </div>
-    <div id="self-video-container" cdkDragBoundary="#app-root" cdkDrag>
-      <video #selfVideo autoplay></video>
     </div>
   </div>
 </div>

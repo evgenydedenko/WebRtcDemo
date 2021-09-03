@@ -20,9 +20,10 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {TextFieldModule} from "@angular/cdk/text-field";
 import {HttpClientModule} from "@angular/common/http";
-import {DragDropModule} from "@angular/cdk/drag-drop";
 import { VideoViewComponent } from './video-view/video-view.component';
-import {MatGridListModule} from "@angular/material/grid-list";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { SettingsComponent } from './settings/settings.component';
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import {MatGridListModule} from "@angular/material/grid-list";
     UserComponent,
     CreateNewRoomDialogComponent,
     VideoViewComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,12 +51,14 @@ import {MatGridListModule} from "@angular/material/grid-list";
     MatInputModule,
     TextFieldModule,
     HttpClientModule,
-    DragDropModule,
-    MatGridListModule
+    MatProgressSpinnerModule,
+    MatSelectModule
   ],
   entryComponents: [
     RoomsListComponent,
-    CreateNewRoomDialogComponent
+    CreateNewRoomDialogComponent,
+    RoomComponent,
+    SettingsComponent
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

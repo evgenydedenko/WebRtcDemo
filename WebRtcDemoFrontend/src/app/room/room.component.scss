@@ -8,7 +8,7 @@
 }
 
 #room-container {
-  height: calc(100% - 60px);
+  overflow: hidden;
 }
 
 #room-container > div {
@@ -20,6 +20,7 @@
   flex-direction: row;
   justify-content: space-between;
   position: relative;
+  height: calc(100% - 61px);
 }
 
 #room-video-call-container,
@@ -30,29 +31,32 @@
   border: 0;
 }
 
-#room-video-call-container {
+#room-content-container #room-video-call-container {
   width: calc(75% - 10px);
   height: calc(100% - 1px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: flex-start;
+  overflow: auto;
 }
 
-#room-chat-container {
+#room-content-container #room-chat-container {
   width: 25%;
 }
 
-:host ::ng-deep #room-video-call-container .mat-grid-tile-content,
-:host ::ng-deep #room-video-call-container .mat-grid-tile-content > * {
+#room-content-container.is-chat-closed #room-video-call-container {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 1px);
 }
 
-:host ::ng-deep #room-video-call-container .mat-grid-list {
-  height: 100% !important;
-  overflow: auto;
+#room-content-container.is-chat-closed #room-chat-container {
+  display: none;
 }
 
 #media-buttons-control {
   height: 100%;
-  width: 150px;
+  width: 230px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -60,36 +64,46 @@
   padding-right: 1em;
 }
 
-#self-video-container {
-  width: 330px;
-  height: 180px;
-  border: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.87);
-  cursor: move;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  border-radius: 4px;
-  position: absolute;
-  z-index: 1;
-  box-sizing: border-box;
-  transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-  0 2px 2px 0 rgba(0, 0, 0, 0.14),
-  0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  top: calc(100% - 220px);
-  left: 20px;
-  background: #5f5252 url("~/src/assets/videocam_off_black_24dp.svg") no-repeat center center;
-  background-size: 20% auto;
-}
-
-#self-video-container video {
-  width: 100%;
-  height: 100%;
-}
-
 #waiting-title {
   text-align: center;
   text-transform: uppercase;
+  width: 100%;
+  margin-top: 1em;
+}
+
+#waiting-title > div:first-child {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.video-cell {
+  width: 30%;
+  max-height: 60%;
+  flex: 0.05 1 auto;
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1200px) {
+  #room-content-container #room-video-call-container {
+    width: 100%;
+    display: none;
+  }
+
+  #room-content-container #room-chat-container {
+    width: 100%;
+    margin-left: 15px;
+  }
+
+  #room-content-container.is-chat-closed #room-video-call-container {
+    display: flex;
+  }
+
+  #room-content-container.is-chat-closed #room-chat-container {
+    display: none;
+  }
+
+  .video-cell {
+    flex: 0.4 1 auto;
+  }
 }
