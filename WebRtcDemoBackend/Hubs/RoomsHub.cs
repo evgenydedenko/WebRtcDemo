@@ -14,8 +14,8 @@ namespace WebRtcDemoBackend.Hubs
     {
         private readonly IHttpContextAccessor _http;
         private readonly IChatRepository _chatRepository;
-        private readonly static RoomsProcessor roomsProcessor = new();
-        private IQueryCollection QueryParams => _http.HttpContext.Request.Query;
+        public readonly static RoomsProcessor RoomsProcessor = new();
+        private IQueryCollection QueryParams => _http?.HttpContext?.Request.Query;
         private string ConnectionId => Context.ConnectionId;
         private string RoomId => QueryParams["roomId"];
         private string UserId => QueryParams["userId"];
@@ -39,7 +39,7 @@ namespace WebRtcDemoBackend.Hubs
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             await Groups.RemoveFromGroupAsync(ConnectionId, RoomId);
-            roomsProcessor.LeaveRoom(RoomNumId, ConnectionId);
+            RoomsProcessor.LeaveRoom(RoomNumId, ConnectionId);
             await Clients.Group(RoomId).SendAsync("onAnotherUsersDisconnected", ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
@@ -53,7 +53,7 @@ namespace WebRtcDemoBackend.Hubs
 
         public async Task JoinRoom()
         {
-            var anotherUsers = roomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
+            var anotherUsers = RoomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
             await Clients.Client(ConnectionId).SendAsync("onAnotherUsersSent", anotherUsers);
         }
 

@@ -1,59 +1,70 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using WebRtcDemoBackend.BLL.Classes;
+using WebRtcDemoBackend.BLL.Exceptions;
 using WebRtcDemoBackend.Models.Common;
 
 namespace WebRtcDemoBackend.BLL.Sevices
 {
     public class RoomsProcessor
     {
-        private readonly ConcurrentDictionary<int, RoomData> rooms = new();
+        private readonly ConcurrentDictionary<int, RoomData> _rooms = new();
 
-        public IReadOnlyCollection<RoomUser> JoinRoom(int roomId, int userId, string conenctionId)
+        public IReadOnlyCollection<RoomUserCountInfo> RoomsIds
         {
-            var room = GetRoom(roomId);
-            if (room == null)
+            get
             {
-                room = AddRoom(roomId);
+                return _rooms.Select(r => new RoomUserCountInfo
+                {
+                    Id = r.Key,
+                    UserCount = r.Value.UsersCount
+                }).ToArray();
             }
-            room.AddUser(userId, conenctionId);
-
-            return room.GetAnotherUsers(conenctionId);
+        }
+        
+        public IReadOnlyCollection<RoomUser> JoinRoom(int roomId, int userId, string connectionId)
+        {
+            var room = GetRoom(roomId) ?? AddRoom(roomId);
+            if (room.UsersCount > Constants.Constants.MaxRoomUser)
+            {
+                throw new FullRoomException("Room is full");
+            }
+            room.AddUser(userId, connectionId);
+            return room.GetAnotherUsers(connectionId);
         }
 
         public void LeaveRoom(int roomId, string connectionId)
         {
             var room = GetRoom(roomId);
-            if (room != null)
+            
+            if (room == null) return;
+            
+            room.RemoveUser(connectionId);
+            if (room.UsersCount == 0)
             {
-                room.RemoveUser(connectionId);
-                if (room.UsersCount == 0)
-                {
-                    RemoveRoom(roomId);
-                } 
+                RemoveRoom(roomId);
             }
         }
 
-        public RoomData GetRoom(int roomId)
+        private RoomData GetRoom(int roomId)
         {
-            if (rooms.TryGetValue(roomId, out RoomData roomClients))
-            {
-                return roomClients;
-            }
-            return null;
+            return _rooms.TryGetValue(roomId, out var roomClients) ? roomClients : null;
         }
 
         private RoomData AddRoom(int roomId)
         {
             var room = new RoomData();
 
-            rooms.TryAdd(roomId, room);
+            _rooms.TryAdd(roomId, room);
 
             return room;
         }
 
         private RoomData RemoveRoom(int roomId)
         {
-            rooms.TryRemove(roomId, out RoomData room);
+            _rooms.TryRemove(roomId, value: out var room);
 
             return room;
         }

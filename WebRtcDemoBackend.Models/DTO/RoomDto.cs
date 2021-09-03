@@ -13,5 +13,7 @@ namespace WebRtcDemoBackend.Models.DTO
         public int UserId { get; set; }
 
         public string CreatedBy { get; set; }
+        
+        public int UsersCount { get; set; }
     }
 }
