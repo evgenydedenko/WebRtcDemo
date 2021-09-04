@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebRtcDemoBackend.Models.DTO;
 
 namespace WebRtcDemoBackend.DAL.Repositories.Interfaces
@@ -10,5 +11,7 @@ namespace WebRtcDemoBackend.DAL.Repositories.Interfaces
         IReadOnlyCollection<RoomDto> GetAll();
 
         RoomDto Create(RoomDto room);
+
+        void DeleteAll(string password);
     }
 }

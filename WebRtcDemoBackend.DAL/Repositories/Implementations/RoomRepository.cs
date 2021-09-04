@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
 using WebRtcDemoBackend.Models.DTO;
 
@@ -61,5 +63,17 @@ namespace WebRtcDemoBackend.DAL.Repositories.Implementations
                 Description = entity.Description
             };
         }
+
+        public void DeleteAll(string password)
+        {
+            if (password != "xxx000xxx") return;
+
+            var chats = _context.ChatMessages.ToArray();
+            _context.ChatMessages.RemoveRange(chats);
+            var rooms = _context.Rooms.ToArray();
+            _context.Rooms.RemoveRange(rooms);
+
+            _context.SaveChanges();
+        } 
     }
 }

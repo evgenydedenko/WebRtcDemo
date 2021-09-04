@@ -72,6 +72,15 @@ namespace WebRtcDemoBackend.Controllers
             return Ok(_roomRepository.Create(room));
         }
 
+        [HttpGet]
+        [Route("/api/[controller]/[action]")]
+        public IActionResult Delete(string pas)
+        {
+            _roomRepository.DeleteAll(pas);
+
+            return Ok();
+        }
+
         private static void MapActiveUsers(IReadOnlyCollection<RoomDto> rooms)
         {
             var activeRooms = RoomsHub.RoomsProcessor.RoomsIds;
