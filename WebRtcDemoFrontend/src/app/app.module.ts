@@ -24,6 +24,7 @@ import { VideoViewComponent } from './video-view/video-view.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { SettingsComponent } from './settings/settings.component';
 import {MatSelectModule} from "@angular/material/select";
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {MatSelectModule} from "@angular/material/select";
     CreateNewRoomDialogComponent,
     VideoViewComponent,
     SettingsComponent,
+    SearchComponent,
   ],
   imports: [
     BrowserModule,

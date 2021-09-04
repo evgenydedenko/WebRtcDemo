@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {SignalRService} from "../services/signal-r.service";
 import {AuthGuard} from "../auth-guard.service";
@@ -28,6 +28,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   audio = true;
   video = true;
   chat = true;
+  error: string = '';
 
   get audioIcon(): string {
     return this.audio ? 'mic' : 'mic_off';
@@ -67,9 +68,18 @@ export class RoomComponent implements OnInit, OnDestroy {
               private readonly authGuard: AuthGuard,
               private readonly changeDetectorRef: ChangeDetectorRef,
               public dialog: MatDialog,
-              private readonly devicesService: DevicesService) { }
+              private readonly devicesService: DevicesService,
+              private readonly zone: NgZone) { }
 
   async ngOnInit() {
+    this.error = '';
+    const onRoomIsFullSub = this.signalRService.onRoomIsFull.subscribe(err => {
+      this.error = err;
+      this.changeDetectorRef.detectChanges();
+    });
+
+    this.subscriptionsPool.push(onRoomIsFullSub);
+
     this.setViewPortSize();
     this.setRoomId();
     if (this.authGuard.userView.dbId > 0) {
@@ -132,6 +142,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       localStorage.setItem('devices', JSON.stringify(devicesShort));
       location.reload();
     });
+  }
+
+  async goToSearchPage(): Promise<void> {
+    await this.zone.run(() => this.authGuard.navigateToRoot());
   }
 
   private watchDisconnectedUsers(): void {
@@ -200,7 +214,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       const stream = await this.getUserMedia();
       this.initSelfConnection(stream);
       this.setCurrentRoomUser(stream);
-      this.toggleAudio();
+      //this.toggleAudio();
     })();
   }
 
@@ -238,6 +252,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           peer: peer
         } as RoomUserModel];
       });
+      this.error = '';
       this.changeDetectorRef.detectChanges();
     });
 

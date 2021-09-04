@@ -16,6 +16,7 @@ export class SignalRService {
   onReceivingReturnedSignal = new EventEmitter<SignalModel>();
   onAnotherUsersSent = new EventEmitter<RoomUserShortModel[]>();
   onAnotherUsersDisconnected = new EventEmitter<string>();
+  onRoomIsFull = new EventEmitter<string>();
 
   get connectionId(): string {
     return this.connection?.connectionId || '';
@@ -40,6 +41,10 @@ export class SignalRService {
       this.connection?.on(action, (data: any) => {
         (this.getPropertyValue(this, action) as EventEmitter<any>)?.emit(data);
       });
+    });
+
+    this.connection?.on("RoomIsFull", (data: string) => {
+      this.onRoomIsFull.emit(data);
     });
 
     await this.connection.start();

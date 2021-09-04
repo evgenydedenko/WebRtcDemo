@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
+using WebRtcDemoBackend.BLL.Exceptions;
 using WebRtcDemoBackend.BLL.Helpers;
 using WebRtcDemoBackend.BLL.Sevices;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
@@ -53,8 +54,15 @@ namespace WebRtcDemoBackend.Hubs
 
         public async Task JoinRoom()
         {
-            var anotherUsers = RoomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
-            await Clients.Client(ConnectionId).SendAsync("onAnotherUsersSent", anotherUsers);
+            try
+            {
+                var anotherUsers = RoomsProcessor.JoinRoom(RoomNumId, UserNumId, ConnectionId);
+                await Clients.Client(ConnectionId).SendAsync("onAnotherUsersSent", anotherUsers);
+            }
+            catch (FullRoomException ex)
+            {
+                await Clients.Client(ConnectionId).SendAsync("RoomIsFull", ex.Message);
+            }
         }
 
         public async Task OnSendingSignal(SignalDto payload)

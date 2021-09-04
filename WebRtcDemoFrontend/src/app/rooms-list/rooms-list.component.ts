@@ -12,7 +12,7 @@ import {AuthGuard} from "../auth-guard.service";
   styleUrls: ['./rooms-list.component.scss']
 })
 export class RoomsListComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'description', 'createdBy', 'createdAt'];
+  displayedColumns: string[] = ['id', 'description', 'createdBy', 'createdAt', "members"];
   dataSource: RoomModel[] = [];
   selectedRowId?: number;
 

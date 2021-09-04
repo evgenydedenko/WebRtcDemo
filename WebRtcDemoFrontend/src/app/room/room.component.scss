@@ -107,3 +107,20 @@
     flex: 0.4 1 auto;
   }
 }
+
+#error-container {
+  position: fixed;
+  background: #454545;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+#error-container > h1 {
+  text-transform: uppercase;
+}

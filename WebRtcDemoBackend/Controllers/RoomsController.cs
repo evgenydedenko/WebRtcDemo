@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using WebRtcDemoBackend.BLL.Constants;
 using WebRtcDemoBackend.DAL.Repositories.Interfaces;
@@ -36,26 +37,22 @@ namespace WebRtcDemoBackend.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_roomRepository.GetAll());
+            var rooms = _roomRepository.GetAll();
+            MapActiveUsers(rooms);
+
+            return Ok(rooms);
         }
 
         [HttpGet]
+        [Route("/api/[controller]/[action]")]
         public IActionResult Search(string userName, int userId)
         {
+            
             var rooms = _roomRepository.GetAll();
-            var activeRooms = RoomsHub.RoomsProcessor.RoomsIds;
 
-            if (activeRooms.Any())
-            {
-                foreach (var roomDto in rooms)
-                {
-                    var activeRoom = activeRooms.FirstOrDefault(x => x.Id == roomDto.Id);
-                    if (activeRoom == null) continue;
-                    roomDto.UsersCount = activeRoom.Id;
-                }   
-            }
+            MapActiveUsers(rooms);
 
-            var existRoom = rooms.Where(x => x.UsersCount < Constants.MaxRoomUser)
+            var existRoom = rooms.Where(x => x.UsersCount <= Constants.MaxRoomUser)
                                 .OrderByDescending(x => x.UsersCount)
                                 .FirstOrDefault() ?? 
                             _roomRepository.Create(new RoomDto
@@ -73,6 +70,21 @@ namespace WebRtcDemoBackend.Controllers
         public IActionResult Post([FromBody] RoomDto room)
         {
             return Ok(_roomRepository.Create(room));
+        }
+
+        private static void MapActiveUsers(IReadOnlyCollection<RoomDto> rooms)
+        {
+            var activeRooms = RoomsHub.RoomsProcessor.RoomsIds;
+
+            if (activeRooms.Any())
+            {
+                foreach (var roomDto in rooms)
+                {
+                    var activeRoom = activeRooms.FirstOrDefault(x => x.Id == roomDto.Id);
+                    if (activeRoom == null) continue;
+                    roomDto.UsersCount = activeRoom.UserCount;
+                }
+            }
         }
     }
 }

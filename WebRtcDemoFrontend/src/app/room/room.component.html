@@ -45,4 +45,11 @@
       <app-chat [roomId]="currentRoomId"></app-chat>
     </div>
   </div>
+  <section id="error-container" *ngIf="!!error">
+    <h1>{{error}}</h1>
+    <button mat-raised-button color="accent" title="Search another room" (click)="goToSearchPage()">
+      <mat-icon>search</mat-icon>
+      Search another room
+    </button>
+  </section>
 </div>

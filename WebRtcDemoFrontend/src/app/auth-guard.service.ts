@@ -57,8 +57,16 @@ export class AuthGuard implements CanActivate {
     this.navigateToAuth();
   }
 
-  navigateToRoot(): void {
+  navigateToRoot(force: boolean = false): void {
+    if (force) {
+      location.replace('');
+      return;
+    }
     this.router.navigate(['']);
+  }
+
+  navigateToRoom(id: number): void {
+    this.router.navigate(['room', id]);
   }
 
   navigateToAuth(): void {

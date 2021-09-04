@@ -4,4 +4,5 @@ export interface RoomModel {
   createdBy: string;
   userId: number;
   createdAt: Date;
+  usersCount: number;
 }
